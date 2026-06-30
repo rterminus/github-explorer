@@ -1,5 +1,6 @@
 ---
-
+import "../styles/global.css";
+import Navbar from "../components/Navbar.jsx";
 ---
 
 <html lang="en">
@@ -12,6 +13,8 @@
     <title>Astro</title>
   </head>
   <body class="bg-surface">
-    <main></main>
+    <main class="gap-gap-section flex w-full max-w-3xl flex-col">
+      <Navbar client:load />
+    </main>
   </body>
 </html>
