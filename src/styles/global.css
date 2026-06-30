@@ -55,13 +55,15 @@
   --color-error-container: #93000a;
   --color-on-error-container: #ffdad6;
 
-  --color-outline: #87929a;
-  --color-outline-variant: #3e484f;
+  --color-outline: #3e484f;
+  --color-outline-variant: #3e484a;
 
-  --color-surface-bg: #09090b;
+  --color-surface-bg: #131315;
   --color-surface-card: rgba(24, 24, 27, 0.5);
   --color-surface-input: #18181b;
+
   --color-border-subtle: #27272a;
+
   --color-text-primary: #fafafa;
   --color-text-secondary: #a1a1aa;
   --color-text-muted: #71717a;

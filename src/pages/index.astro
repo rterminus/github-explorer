@@ -5,6 +5,7 @@ import "@fontsource/geist-sans";
 // @ts-ignore
 import "@fontsource/jetbrains-mono";
 import Navbar from "../components/Navbar.jsx";
+import ProfileCard from "../components/ProfileCard.jsx";
 ---
 
 <html lang="en">
@@ -21,6 +22,7 @@ import Navbar from "../components/Navbar.jsx";
     <main
       class="gap-gap-section mx-auto flex w-full max-w-3xl flex-col px-6 py-8 lg:px-0"
     >
+      <ProfileCard client:load />
     </main>
   </body>
 </html>
