@@ -1,5 +1,9 @@
 ---
 import "../styles/global.css";
+// @ts-ignore
+import "@fontsource/geist-sans";
+// @ts-ignore
+import "@fontsource/jetbrains-mono";
 import Navbar from "../components/Navbar.jsx";
 ---
 
@@ -12,9 +16,11 @@ import Navbar from "../components/Navbar.jsx";
     <meta name="generator" content={Astro.generator} />
     <title>Astro</title>
   </head>
-  <body class="bg-surface">
-    <main class="gap-gap-section flex w-full max-w-3xl flex-col">
-      <Navbar client:load />
+  <body class="bg-surface h-full w-full font-sans">
+    <Navbar client:load />
+    <main
+      class="gap-gap-section mx-auto flex w-full max-w-3xl flex-col px-6 py-8 lg:px-0"
+    >
     </main>
   </body>
 </html>

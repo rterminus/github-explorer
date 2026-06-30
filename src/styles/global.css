@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Geist", sans-serif;
+  --font-sans: "Geist Sans", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
   --color-background: #131315;
@@ -84,4 +84,3 @@
     @apply bg-surface-bg text-text-primary antialiased;
   }
 }
-
