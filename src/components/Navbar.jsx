@@ -1,6 +1,14 @@
 import { Search } from "lucide-react";
 
-export default function Navbar() {
+export default function Navbar({ onSearch }) {
+  const handleKeyDown = (event) => {
+    if (event.key !== "Enter") return;
+
+    const typedText = event.target.value;
+
+    onSearch(typedText);
+  };
+
   return (
     <header className="bg-surface-bg border-border-subtle w-full border-b">
       <div className="mx-auto flex h-20 w-full max-w-3xl flex-row items-center justify-between px-6 lg:px-0">
@@ -13,6 +21,7 @@ export default function Navbar() {
             className="bg-surface-input text-text-primary border-border-subtle focus:border-primary focus:ring-primary w-full rounded-md border px-4 py-2 pl-10 font-bold transition-colors focus:ring-1 focus:outline-none"
             type="text"
             placeholder="Search GitHub username..."
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>
