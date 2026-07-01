@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 
+import ErrorScreen from "../components/ErrorScreen.jsx";
+import Footer from "../components/Footer.jsx";
+import HomeScreen from "../components/HomeScreen.jsx";
 import Navbar from "../components/Navbar.jsx";
 import ProfileCard from "../components/ProfileCard.jsx";
 import ProfileSkeleton from "../components/ProfileSkeleton.jsx";
 import RepoGrid from "../components/RepoGrid.jsx";
 import RepoSkeleton from "../components/RepoSkeleton.jsx";
-import Footer from "../components/Footer.jsx";
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,35 +53,30 @@ export default function App() {
   }, [searchQuery]);
 
   return (
-    <>
-      <Navbar onSearch={setSearchQuery} isLoading={isLoading} />
-      <main className="mx-auto flex w-full max-w-3xl flex-col gap-10 md:gap-16 px-6 py-8 lg:px-0">
-        {hasError ? (
-          <div className="bg-surface-card border-border-subtle flex flex-col items-center justify-center gap-4 rounded-xl border py-20 text-center">
-            <span className="text-text-muted material-symbols-outlined text-5xl">
-              Error!
-            </span>
-            <h2 className="text-text-primary text-2xl font-bold">
-              User not found
-            </h2>
-            <p className="text-text-secondary">
-              We couldn't find anyone with the username{" "}
-              <span className="text-primary text-lg">@{searchQuery}</span>.
-            </p>
-          </div>
-        ) : !isLoading && userData ? (
-          <>
-            <ProfileCard user={userData} />
-            <RepoGrid repos={userRepos} />
-          </>
-        ) : (
-          <>
-            <ProfileSkeleton />
-            <RepoSkeleton />
-          </>
-        )}
-      </main>
-      <Footer />
-    </>
+    <div className="min-h-screen flex flex-col">
+      {searchQuery === "" ? (
+        <HomeScreen onSearch={setSearchQuery} isLoading={isLoading} />
+      ) : (
+        <>
+          <Navbar onSearch={setSearchQuery} isLoading={isLoading} />
+          <main className="mx-auto flex w-full max-w-3xl flex-col gap-10 px-6 py-8 md:gap-16 lg:px-0">
+            {hasError ? (
+              <ErrorScreen searchQuery={searchQuery} />
+            ) : !isLoading && userData ? (
+              <>
+                <ProfileCard user={userData} />
+                <RepoGrid repos={userRepos} />
+              </>
+            ) : (
+              <>
+                <ProfileSkeleton />
+                <RepoSkeleton />
+              </>
+            )}
+          </main>
+        </>
+      )}
+    <Footer />
+    </div>
   );
 }
