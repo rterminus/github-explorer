@@ -11,10 +11,18 @@ import App from "../components/App.jsx";
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
+    <title>GitExplorer | Explore GitHub Profiles</title>
+    <meta
+      name="description"
+      content="A fast, clean, and modern GitHub profile explorer built with React and Astro."
+    />
+    <meta property="og:title" content="GitExplorer" />
+    <meta
+      property="og:description"
+      content="Explore GitHub profiles, repositories, and statistics in a clean, high-performance interface."
+    />
   </head>
   <body class="bg-surface h-full w-full font-sans">
     <App client:load />

@@ -8,13 +8,19 @@ const anchors = [
 export default function Footer() {
   return (
     <footer className="bg-surface-bg border-border-subtle w-full border-t">
-      <div className="mx-auto flex h-20 w-full max-w-3xl flex-row items-center justify-between px-6 lg:px-0">
+      <div className="mx-auto flex h-auto w-full max-w-3xl flex-col items-center justify-between gap-4 px-6 py-8 md:h-20 md:flex-row md:py-0 lg:px-0">
         <span className="text-text-muted text-sm">
           © 2026, rterminus. Built for developers.
         </span>
-        <div className="text-text-muted flex gap-4">
+        <div className="text-text-muted flex flex-wrap justify-center gap-4 text-sm">
           {anchors.map((a) => (
-            <a href={a.link} className="hover:text-primary transition-colors">
+            <a
+              key={a.label}
+              href={a.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors"
+            >
               {a.label}
             </a>
           ))}

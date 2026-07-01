@@ -53,7 +53,7 @@ export default function App() {
   return (
     <>
       <Navbar onSearch={setSearchQuery} isLoading={isLoading} />
-      <main className="mx-auto flex w-full max-w-3xl flex-col gap-16 px-6 py-8 lg:px-0">
+      <main className="mx-auto flex w-full max-w-3xl flex-col gap-10 md:gap-16 px-6 py-8 lg:px-0">
         {hasError ? (
           <div className="bg-surface-card border-border-subtle flex flex-col items-center justify-center gap-4 rounded-xl border py-20 text-center">
             <span className="text-text-muted material-symbols-outlined text-5xl">
