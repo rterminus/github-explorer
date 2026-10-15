@@ -9,41 +9,48 @@ import ProfileSkeleton from "../components/ProfileSkeleton.jsx";
 import RepoGrid from "../components/RepoGrid.jsx";
 import RepoSkeleton from "../components/RepoSkeleton.jsx";
 
+const API_URL = import.meta.env.PUBLIC_API_URL ?? "";
+
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [userData, setUserData] = useState(null);
   const [userRepos, setUserRepos] = useState([]);
-  const [hasError, setHasError] = useState(false);
+  const [errorStatus, setErrorStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!searchQuery) return;
 
     async function fetchGitHubData() {
-      setHasError(false);
+      setErrorStatus(null);
       setUserData(null);
       setIsLoading(true);
 
+      const user = encodeURIComponent(searchQuery);
+
       try {
         // profile data fetching
-        const userResponse = await fetch(
-          `https://api.github.com/users/${searchQuery}`,
-        );
+        const userResponse = await fetch(`${API_URL}/api/users/${user}`);
         if (!userResponse.ok) {
-          throw new Error("User not found");
+          setErrorStatus(userResponse.status);
+          return;
         }
         const userDataJson = await userResponse.json();
         setUserData(userDataJson);
 
         // repo data fetching
         const reposResponse = await fetch(
-          `https://api.github.com/users/${searchQuery}/repos?sort=updated&per_page=4`,
+          `${API_URL}/api/users/${user}/repos`,
         );
+        if (!reposResponse.ok) {
+          setErrorStatus(reposResponse.status);
+          return;
+        }
         const reposDataJson = await reposResponse.json();
         setUserRepos(reposDataJson);
       } catch (error) {
         console.error("Error encountered: ", error);
-        setHasError(true);
+        setErrorStatus(0);
       } finally {
         setIsLoading(false);
       }
@@ -53,15 +60,15 @@ export default function App() {
   }, [searchQuery]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       {searchQuery === "" ? (
         <HomeScreen onSearch={setSearchQuery} isLoading={isLoading} />
       ) : (
         <>
           <Navbar onSearch={setSearchQuery} isLoading={isLoading} />
           <main className="mx-auto flex w-full max-w-3xl flex-col gap-10 px-6 py-8 md:gap-16 lg:px-0">
-            {hasError ? (
-              <ErrorScreen searchQuery={searchQuery} />
+            {errorStatus !== null ? (
+              <ErrorScreen searchQuery={searchQuery} status={errorStatus} />
             ) : !isLoading && userData ? (
               <>
                 <ProfileCard user={userData} />
@@ -76,7 +83,7 @@ export default function App() {
           </main>
         </>
       )}
-    <Footer />
+      <Footer />
     </div>
   );
 }
