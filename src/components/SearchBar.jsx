@@ -9,7 +9,9 @@ export default function SearchBar({
   const handleKeyDown = (event) => {
     if (event.key !== "Enter") return;
 
-    const typedText = event.target.value;
+    const typedText = event.target.value.trim();
+
+    if (!typedText) return;
 
     onSearch(typedText);
   };
