@@ -1,5 +1,5 @@
 export default function RepoGrid({ repos }) {
-  if (!repos || repos.length === 0) return null;
+  if (!Array.isArray(repos)) return null;
 
   return (
     <div
