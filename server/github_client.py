@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import os
 import socket
@@ -116,9 +118,9 @@ def resolve_redirect_path(location: str) -> str:
     parts = urlsplit(location)
     if parts.netloc and parts.netloc != API_HOST:
         # Nunca seguir para outro host: o token vazaria para um terceiro
-        raise RuntimeError(f"Redirecionamento para host não permitido: {parts.netloc}")
+        raise ConnectionError(f"Redirecionamento para host não permitido: {parts.netloc}")
     if parts.scheme and parts.scheme != "https":
-        raise RuntimeError("Redirecionamento para esquema não seguro.")
+        raise ConnectionError("Redirecionamento para esquema não seguro.")
 
     path = parts.path or "/"
     if parts.query:
@@ -127,6 +129,12 @@ def resolve_redirect_path(location: str) -> str:
 
 
 def github_get(path: str, token: str | None = None) -> tuple[int, bytes]:
+    """Faz GET em api.github.com e devolve (status, corpo) sem alterar o corpo.
+
+    Erros de rede/resposta inválida/redirect proibido -> ConnectionError ou
+    ValueError (o servidor transforma em 502). Rate limit NÃO lança exceção:
+    o status 403 (ou 429, convertido para 403) é devolvido com o corpo original.
+    """
     if token is None:
         token = os.getenv("GITHUB_TOKEN")
 
@@ -136,7 +144,8 @@ def github_get(path: str, token: str | None = None) -> tuple[int, bytes]:
         if time.time() < expires_at:
             print("[CACHE] Retornando dados da memória!")
             return (status_cache, body_cache)
-        del CACHE[path]
+        # pop (e não del): outra thread pode ter removido o item antes
+        CACHE.pop(path, None)
 
     current_path = path
     for _ in range(MAX_REDIRECTS + 1):
@@ -149,15 +158,17 @@ def github_get(path: str, token: str | None = None) -> tuple[int, bytes]:
             continue
         break
     else:
-        raise RuntimeError("Redirecionamentos demais ao acessar a API do GitHub.")
-
-    if status == 429 or (
-        status == 403 and headers_dict.get("x-ratelimit-remaining") == "0"
-    ):
-        raise RuntimeError("Limite de requisições da API do GitHub atingido.")
+        raise ConnectionError("Redirecionamentos demais ao acessar a API do GitHub.")
 
     if "chunked" in headers_dict.get("transfer-encoding", "").lower():
         body_bytes = decode_chunked_body(body_bytes)
+
+    # O GitHub também usa 429 para limite de requisições; o front só conhece 403
+    if status == 429:
+        status = 403
+
+    if status == 403 and headers_dict.get("x-ratelimit-remaining") == "0":
+        print("[RATE LIMIT] Limite de requisições da API do GitHub atingido.")
 
     # Só cacheia respostas bem-sucedidas, para não repetir erros temporários
     if status == 200:
@@ -167,7 +178,9 @@ def github_get(path: str, token: str | None = None) -> tuple[int, bytes]:
 
 
 if __name__ == "__main__":
-    path = "/users/octocat"
+    import sys
+
+    path = sys.argv[1] if len(sys.argv) > 1 else "/users/octocat"
     status, body_bytes = github_get(path)
     print(f"Status: {status}")
     print("Corpo da Resposta (JSON):")

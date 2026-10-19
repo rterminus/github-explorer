@@ -4,23 +4,13 @@ import socket
 import threading
 from urllib.parse import unquote
 
+from github_client import github_get
+from static import serve_static
+
 HOST, PORT = "0.0.0.0", 8000
 USERNAME_RE = re.compile(r"^[A-Za-z0-9-]{1,39}$")
 REASONS = {200: "OK", 204: "No Content", 400: "Bad Request", 403: "Forbidden",
            404: "Not Found", 500: "Internal Server Error", 502: "Bad Gateway"}
-
-
-# Integrante 2 — trocar pelo github_get real na integração.
-def github_get(path):
-    return 200, b'{"login": "octocat"}'
-
-
-# Integrante 3 — static.py; até lá, 404 para tudo fora de /api/.
-try:
-    from static import serve_static
-except ImportError:
-    def serve_static(path):
-        return 404, "text/plain; charset=utf-8", b"Not Found"
 
 
 def error(status, message):
@@ -45,7 +35,7 @@ def route(method, path):
     gh_path = f"/users/{username}" + ("/repos?sort=updated&per_page=4" if len(parts) == 3 else "")
     try:
         status, body = github_get(gh_path)
-    except OSError:  # URLError, timeout, conexão recusada...
+    except (OSError, ValueError):  # rede, timeout, TLS, resposta inválida do GitHub...
         return error(502, "GitHub unreachable")
     return status, "application/json", body
 

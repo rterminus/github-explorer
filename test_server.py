@@ -35,7 +35,7 @@ def test_existing_user_is_200():
 
 
 def test_missing_user_is_404():
-    status, _, _ = get("/api/users/leticiamaironrenan")
+    status, _, _ = get("/api/users/this-user-should-not-exist-redes-2026")
     assert status == 404, f"expected 404, got {status}"
 
 
